@@ -7,9 +7,9 @@ require 'open-uri'
 
 base_uri = 'http://lambda.bugyo.tk/cdr/mwl/'
 pdf_file = 'manga_lisp.pdf'
-pdf_font = 'umefont_422/ume-ugo5.ttf'
+pdf_font = 'umefont_422/ume-ugo5.ttf' # change your favorite font
 
-# get all section page data
+# get all section pages data
 doc = Nokogiri(open(base_uri).read)
 
 sections = Array.new
@@ -48,6 +48,7 @@ pdf = Prawn::Document.new(:page_size => [480,640],
 
 pdf.font pdf_font
 
+
 pdf.bounding_box([40,400], :width => 400, :height => 200) do
   pdf.text "マンガで分かるLisp\n(Manga Guide to Lisp)", :size => 32
 end
@@ -64,8 +65,14 @@ sections.each do |section|
   section['images'].each do |image|
     pdf.start_new_page
     pdf.image open(image), :at => [0,640], :width => 480, :height => 640
+    sleep 0.5 # sensitivity to remote site...
   end
 
+end
+
+pdf.bounding_box([40,400], :width => 400, :height => 200) do
+  pdf.start_new_page
+  pdf.text "Original: " + base_uri, :size => 20
 end
 
 pdf.render_file pdf_file
